@@ -44,12 +44,18 @@ function PublicOnlyRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
   if (isLoading) {
     return (
-      <Center mih="100vh">
-        <Loader />
-      </Center>
+      <MantineProvider forceColorScheme="light">
+        <Center mih="100vh">
+          <Loader />
+        </Center>
+      </MantineProvider>
     );
   }
-  return isAuthenticated ? <Navigate to="/" replace /> : <>{children}</>;
+  return isAuthenticated ? (
+    <Navigate to="/" replace />
+  ) : (
+    <MantineProvider forceColorScheme="light">{children}</MantineProvider>
+  );
 }
 
 function Protected({ children }: { children: ReactNode }) {
