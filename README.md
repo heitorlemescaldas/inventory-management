@@ -18,7 +18,12 @@ Then open:
 - API: <http://localhost:8000>
 - Swagger: <http://localhost:8000/api/docs/>
 
-Migrations run on their own at boot. Create a user via the registration screen and follow the flow from there.
+Migrations run on their own at boot. A demo account is also seeded automatically on first boot:
+
+- **Username:** `demo`
+- **Password:** `demo1234`
+
+It comes pre-loaded with products, purchase orders, sales orders, and financial data so you can explore the dashboard right away. You can also create your own user via the registration screen.
 
 ---
 
