@@ -18,6 +18,7 @@ import {
   IconPercentage,
   IconChartPie,
 } from '@tabler/icons-react';
+import { BarChart } from '@mantine/charts';
 import { useNavigate } from 'react-router-dom';
 import { useDashboard } from '../api/finance';
 import { formatCurrency, formatNumber } from '../utils/format';
@@ -63,6 +64,7 @@ export default function DashboardPage() {
           ))}
         </SimpleGrid>
         <Skeleton height={300} radius="md" />
+        <Skeleton height={300} radius="md" />
       </Stack>
     );
   }
@@ -75,6 +77,13 @@ export default function DashboardPage() {
       </Stack>
     );
   }
+
+  const chartData = data.products_summary.map((p) => ({
+    product: p.product_name,
+    Revenue: parseFloat(p.total_sales_revenue),
+    Cost: parseFloat(p.total_purchase_cost),
+    Profit: parseFloat(p.profit),
+  }));
 
   return (
     <Stack gap="lg">
@@ -106,6 +115,40 @@ export default function DashboardPage() {
           icon={IconPercentage}
         />
       </SimpleGrid>
+
+      {data.products_summary.length > 0 && (
+        <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="md">
+          <Card withBorder padding="lg" radius="md">
+            <Title order={4} mb="md">
+              Revenue vs Cost
+            </Title>
+            <BarChart
+              h={300}
+              data={chartData}
+              dataKey="product"
+              series={[
+                { name: 'Revenue', color: 'blue' },
+                { name: 'Cost', color: 'red' },
+              ]}
+              tickLine="y"
+              valueFormatter={(value) => `$${value.toFixed(2)}`}
+            />
+          </Card>
+          <Card withBorder padding="lg" radius="md">
+            <Title order={4} mb="md">
+              Profit by Product
+            </Title>
+            <BarChart
+              h={300}
+              data={chartData}
+              dataKey="product"
+              series={[{ name: 'Profit', color: 'teal' }]}
+              tickLine="y"
+              valueFormatter={(value) => `$${value.toFixed(2)}`}
+            />
+          </Card>
+        </SimpleGrid>
+      )}
 
       <Card withBorder padding="lg" radius="md">
         <Title order={4} mb="md">
