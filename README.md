@@ -147,12 +147,15 @@ pytest -v
 There are also end-to-end validation scripts under `backend/scripts/`:
 
 ```bash
-./scripts/validate_basic_flows.sh
-./scripts/validate_advanced_flows.sh
-./scripts/e2e_smoke.sh
+./scripts/run_all.sh                  # runs all five below, prints summary
+./scripts/e2e_smoke.sh                # happy-path smoke (27 asserts)
+./scripts/validate_user_journey.sh    # mirrors the frontend QA checklist
+./scripts/validate_edge_cases.sh      # FIFO, isolation, state transitions
+./scripts/validate_db_consistency.sh  # cross-checks API vs raw Postgres
+./scripts/validate_advanced_flows.sh  # auth lifecycle, pagination, decimals
 ```
 
-In total: 145 asserts covering the main flows + 27 smoke asserts.
+In total: 145 asserts across 5 scripts + 27 smoke asserts.
 
 ---
 
