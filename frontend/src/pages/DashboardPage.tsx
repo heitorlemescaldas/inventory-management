@@ -132,6 +132,13 @@ export default function DashboardPage() {
               ]}
               tickLine="y"
               valueFormatter={(value) => `$${value.toFixed(2)}`}
+              xAxisProps={{
+                interval: 0,
+                angle: -25,
+                textAnchor: 'end',
+                height: 60,
+                tick: { fontSize: 11 },
+              }}
             />
           </Card>
           <Card withBorder padding="lg" radius="md">
@@ -145,6 +152,13 @@ export default function DashboardPage() {
               series={[{ name: 'Profit', color: 'teal' }]}
               tickLine="y"
               valueFormatter={(value) => `$${value.toFixed(2)}`}
+              xAxisProps={{
+                interval: 0,
+                angle: -25,
+                textAnchor: 'end',
+                height: 60,
+                tick: { fontSize: 11 },
+              }}
             />
           </Card>
         </SimpleGrid>
