@@ -160,7 +160,7 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <MantineProvider>
+    <MantineProvider defaultColorScheme="light">
       <Notifications position="top-right" />
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>

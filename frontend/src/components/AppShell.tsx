@@ -1,4 +1,15 @@
-import { AppShell, Burger, Group, NavLink, Text, Button, Avatar } from '@mantine/core';
+import {
+  AppShell,
+  Burger,
+  Group,
+  NavLink,
+  Text,
+  Button,
+  Avatar,
+  ActionIcon,
+  useComputedColorScheme,
+  useMantineColorScheme,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
   IconDashboard,
@@ -6,6 +17,8 @@ import {
   IconShoppingCart,
   IconReceipt,
   IconLogout,
+  IconSun,
+  IconMoon,
 } from '@tabler/icons-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
@@ -28,6 +41,12 @@ export function AppLayout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
+  const { setColorScheme } = useMantineColorScheme();
+  const computedColorScheme = useComputedColorScheme('light');
+
+  const toggleColorScheme = () => {
+    setColorScheme(computedColorScheme === 'dark' ? 'light' : 'dark');
+  };
 
   const handleLogout = () => {
     logout();
@@ -49,6 +68,14 @@ export function AppLayout({ children }: { children: ReactNode }) {
             </Text>
           </Group>
           <Group gap="sm">
+            <ActionIcon
+              variant="subtle"
+              size="lg"
+              onClick={toggleColorScheme}
+              aria-label="Toggle color scheme"
+            >
+              {computedColorScheme === 'dark' ? <IconSun size={18} /> : <IconMoon size={18} />}
+            </ActionIcon>
             <Avatar radius="xl" size="sm" color="blue">
               {user?.username?.[0]?.toUpperCase()}
             </Avatar>
