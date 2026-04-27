@@ -10,6 +10,7 @@ import {
   Center,
   Anchor,
   ThemeIcon,
+  Button,
 } from '@mantine/core';
 import {
   IconCash,
@@ -17,11 +18,12 @@ import {
   IconChartBar,
   IconPercentage,
   IconChartPie,
+  IconDownload,
 } from '@tabler/icons-react';
 import { BarChart } from '@mantine/charts';
 import { useNavigate } from 'react-router-dom';
 import { useDashboard } from '../api/finance';
-import { formatCurrency, formatNumber } from '../utils/format';
+import { formatCurrency, formatNumber, downloadCsv } from '../utils/format';
 
 interface SummaryCardProps {
   label: string;
@@ -84,6 +86,33 @@ export default function DashboardPage() {
     Cost: parseFloat(p.total_purchase_cost),
     Profit: parseFloat(p.profit),
   }));
+
+  const handleExportCsv = () => {
+    if (!data.products_summary.length) return;
+
+    const headers = ['Product', 'Purchased Qty', 'Sold Qty', 'Revenue', 'Cost', 'Profit', 'Margin %'];
+    const rows = data.products_summary.map((p) => [
+      p.product_name,
+      formatNumber(p.total_purchased_quantity, 2),
+      formatNumber(p.total_sold_quantity, 2),
+      formatNumber(p.total_sales_revenue, 2),
+      formatNumber(p.total_purchase_cost, 2),
+      formatNumber(p.profit, 2),
+      formatNumber(p.profit_margin, 2),
+    ]);
+
+    rows.push([
+      'TOTAL',
+      '',
+      '',
+      formatNumber(data.total_revenue, 2),
+      formatNumber(data.total_cost, 2),
+      formatNumber(data.total_profit, 2),
+      formatNumber(data.profit_margin, 2),
+    ]);
+
+    downloadCsv('financial-summary.csv', headers, rows);
+  };
 
   return (
     <Stack gap="lg">
@@ -165,9 +194,19 @@ export default function DashboardPage() {
       )}
 
       <Card withBorder padding="lg" radius="md">
-        <Title order={4} mb="md">
-          Products financial summary
-        </Title>
+        <Group justify="space-between" mb="md">
+          <Title order={4}>Products financial summary</Title>
+          {data.products_summary.length > 0 && (
+            <Button
+              variant="light"
+              size="xs"
+              leftSection={<IconDownload size={16} />}
+              onClick={handleExportCsv}
+            >
+              Export CSV
+            </Button>
+          )}
+        </Group>
         {!data.products_summary || data.products_summary.length === 0 ? (
           <Center p="xl">
             <Stack align="center" gap="xs">
