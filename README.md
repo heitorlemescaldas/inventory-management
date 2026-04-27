@@ -179,25 +179,29 @@ The `main` branch is protected: pushes go through PRs, and merging requires both
 
 ```
 inventory-management/
-├── backend/             Django + DRF API
-│   ├── config/          settings, urls, wsgi
-│   ├── accounts/        register, login, /me
-│   ├── products/        Product + Stock
-│   ├── purchases/       PurchaseOrder + confirm/cancel
-│   ├── sales/           SalesOrder + FIFO on confirm
-│   ├── finance/         dashboard and summaries
-│   ├── scripts/         bash validation scripts
+├── .github/
+│   └── workflows/ci.yml     GitHub Actions: backend tests + frontend checks
+├── backend/                 Django + DRF API
+│   ├── config/              settings, urls, wsgi
+│   ├── accounts/            register, login, /me  (+ tests.py)
+│   ├── products/            Product + Stock        (+ tests.py)
+│   ├── purchases/           PurchaseOrder + confirm/cancel  (+ tests.py)
+│   ├── sales/               SalesOrder + FIFO on confirm    (+ tests.py)
+│   ├── finance/             dashboard and summaries (+ tests.py)
+│   ├── scripts/             bash validation scripts
 │   └── Dockerfile
-├── frontend/            React 19 + Vite + Mantine SPA
+├── frontend/                React 19 + Vite + Mantine SPA
 │   ├── src/
-│   │   ├── api/         per-resource axios clients
-│   │   ├── components/  shared UI
-│   │   ├── contexts/    auth context
-│   │   ├── lib/         axios instance + interceptors
-│   │   └── pages/       screens
-│   ├── nginx.conf       production reverse proxy
-│   └── Dockerfile       multi-stage build → nginx:alpine
-├── docker-compose.yml   db + backend + frontend
+│   │   ├── api/             per-resource axios clients
+│   │   ├── components/      shared UI
+│   │   ├── contexts/        auth context
+│   │   ├── lib/             axios instance + interceptors
+│   │   ├── pages/           screens
+│   │   ├── types/           shared TypeScript types
+│   │   └── utils/           formatters and helpers
+│   ├── nginx.conf           production reverse proxy
+│   └── Dockerfile           multi-stage build → nginx:alpine
+├── docker-compose.yml       db + backend + frontend
 └── README.md
 ```
 
