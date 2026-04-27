@@ -164,29 +164,44 @@ In total: 145 asserts across 5 scripts + 27 smoke asserts.
 
 ---
 
+## Continuous Integration
+
+Every push and pull request targeting `main` runs a GitHub Actions workflow defined in [`.github/workflows/ci.yml`](.github/workflows/ci.yml), with two jobs in parallel:
+
+- **Backend tests** — spins up Postgres 16 as a service, installs Python 3.12 dependencies, runs Django migrations and `pytest -v`.
+- **Frontend checks** — installs Node 20 dependencies, runs `tsc --noEmit` and `npm run build`.
+
+The `main` branch is protected: pushes go through PRs, and merging requires both jobs to be green.
+
+---
+
 ## Layout
 
 ```
 inventory-management/
-├── backend/             Django + DRF API
-│   ├── config/          settings, urls, wsgi
-│   ├── accounts/        register, login, /me
-│   ├── products/        Product + Stock
-│   ├── purchases/       PurchaseOrder + confirm/cancel
-│   ├── sales/           SalesOrder + FIFO on confirm
-│   ├── finance/         dashboard and summaries
-│   ├── scripts/         bash validation scripts
+├── .github/
+│   └── workflows/ci.yml     GitHub Actions: backend tests + frontend checks
+├── backend/                 Django + DRF API
+│   ├── config/              settings, urls, wsgi
+│   ├── accounts/            register, login, /me  (+ tests.py)
+│   ├── products/            Product + Stock        (+ tests.py)
+│   ├── purchases/           PurchaseOrder + confirm/cancel  (+ tests.py)
+│   ├── sales/               SalesOrder + FIFO on confirm    (+ tests.py)
+│   ├── finance/             dashboard and summaries (+ tests.py)
+│   ├── scripts/             bash validation scripts
 │   └── Dockerfile
-├── frontend/            React 19 + Vite + Mantine SPA
+├── frontend/                React 19 + Vite + Mantine SPA
 │   ├── src/
-│   │   ├── api/         per-resource axios clients
-│   │   ├── components/  shared UI
-│   │   ├── contexts/    auth context
-│   │   ├── lib/         axios instance + interceptors
-│   │   └── pages/       screens
-│   ├── nginx.conf       production reverse proxy
-│   └── Dockerfile       multi-stage build → nginx:alpine
-├── docker-compose.yml   db + backend + frontend
+│   │   ├── api/             per-resource axios clients
+│   │   ├── components/      shared UI
+│   │   ├── contexts/        auth context
+│   │   ├── lib/             axios instance + interceptors
+│   │   ├── pages/           screens
+│   │   ├── types/           shared TypeScript types
+│   │   └── utils/           formatters and helpers
+│   ├── nginx.conf           production reverse proxy
+│   └── Dockerfile           multi-stage build → nginx:alpine
+├── docker-compose.yml       db + backend + frontend
 └── README.md
 ```
 
