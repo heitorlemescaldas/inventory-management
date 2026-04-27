@@ -164,6 +164,17 @@ In total: 145 asserts across 5 scripts + 27 smoke asserts.
 
 ---
 
+## Continuous Integration
+
+Every push and pull request targeting `main` runs a GitHub Actions workflow defined in [`.github/workflows/ci.yml`](.github/workflows/ci.yml), with two jobs in parallel:
+
+- **Backend tests** — spins up Postgres 16 as a service, installs Python 3.12 dependencies, runs Django migrations and `pytest -v`.
+- **Frontend checks** — installs Node 20 dependencies, runs `tsc --noEmit` and `npm run build`.
+
+The `main` branch is protected: pushes go through PRs, and merging requires both jobs to be green.
+
+---
+
 ## Layout
 
 ```
