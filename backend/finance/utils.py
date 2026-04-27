@@ -16,7 +16,6 @@ def _decimal(value):
 
 
 def _money(value):
-    """Quantize a Decimal to 2 decimal places for monetary display."""
     return _decimal(value).quantize(_TWO_PLACES, rounding=ROUND_HALF_UP)
 
 
