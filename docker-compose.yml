@@ -27,7 +27,7 @@ services:
       DB_PASSWORD: postgres
       DB_HOST: db
       DB_PORT: "5432"
-    command: ["sh", "-c", "python manage.py migrate --noinput && exec gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3 --access-logfile - --error-logfile -"]
+    command: ["sh", "-c", "python manage.py migrate --noinput && python manage.py seed_demo && exec gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3 --access-logfile - --error-logfile -"]
     ports:
       - "8000:8000"
     depends_on:
