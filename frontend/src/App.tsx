@@ -1,21 +1,23 @@
-import { MantineProvider } from '@mantine/core';
+import { MantineProvider, Center, Loader } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import type { ReactNode } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AppLayout } from './components/AppShell';
+import ErrorBoundary from './components/ErrorBoundary';
 
-// Placeholder pages - agents will implement these
-const LoginPage = () => <div>Login Page</div>;
-const RegisterPage = () => <div>Register Page</div>;
-const DashboardPage = () => <div>Dashboard</div>;
-const ProductsPage = () => <div>Products</div>;
-const ProductDetailPage = () => <div>Product Detail</div>;
-const PurchaseOrdersPage = () => <div>Purchase Orders</div>;
-const PurchaseOrderNewPage = () => <div>New Purchase Order</div>;
-const PurchaseOrderDetailPage = () => <div>Purchase Order Detail</div>;
-const SalesOrdersPage = () => <div>Sales Orders</div>;
-const SalesOrderNewPage = () => <div>New Sales Order</div>;
-const SalesOrderDetailPage = () => <div>Sales Order Detail</div>;
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import DashboardPage from './pages/DashboardPage';
+import ProductsPage from './pages/ProductsPage';
+import ProductDetailPage from './pages/ProductDetailPage';
+import PurchaseOrdersPage from './pages/PurchaseOrdersPage';
+import PurchaseOrderNewPage from './pages/PurchaseOrderNewPage';
+import PurchaseOrderDetailPage from './pages/PurchaseOrderDetailPage';
+import SalesOrdersPage from './pages/SalesOrdersPage';
+import SalesOrderNewPage from './pages/SalesOrderNewPage';
+import SalesOrderDetailPage from './pages/SalesOrderDetailPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,26 +28,132 @@ const queryClient = new QueryClient({
   },
 });
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
+function ProtectedRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
-  if (isLoading) return <div>Loading...</div>;
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
+  if (isLoading) {
+    return (
+      <Center mih="100vh">
+        <Loader />
+      </Center>
+    );
+  }
+  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+}
+
+function PublicOnlyRoute({ children }: { children: ReactNode }) {
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) {
+    return (
+      <Center mih="100vh">
+        <Loader />
+      </Center>
+    );
+  }
+  return isAuthenticated ? <Navigate to="/" replace /> : <>{children}</>;
+}
+
+function Protected({ children }: { children: ReactNode }) {
+  return (
+    <ProtectedRoute>
+      <AppLayout>{children}</AppLayout>
+    </ProtectedRoute>
+  );
 }
 
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-      <Route path="/products" element={<ProtectedRoute><ProductsPage /></ProtectedRoute>} />
-      <Route path="/products/:id" element={<ProtectedRoute><ProductDetailPage /></ProtectedRoute>} />
-      <Route path="/purchases" element={<ProtectedRoute><PurchaseOrdersPage /></ProtectedRoute>} />
-      <Route path="/purchases/new" element={<ProtectedRoute><PurchaseOrderNewPage /></ProtectedRoute>} />
-      <Route path="/purchases/:id" element={<ProtectedRoute><PurchaseOrderDetailPage /></ProtectedRoute>} />
-      <Route path="/sales" element={<ProtectedRoute><SalesOrdersPage /></ProtectedRoute>} />
-      <Route path="/sales/new" element={<ProtectedRoute><SalesOrderNewPage /></ProtectedRoute>} />
-      <Route path="/sales/:id" element={<ProtectedRoute><SalesOrderDetailPage /></ProtectedRoute>} />
+      <Route
+        path="/login"
+        element={
+          <PublicOnlyRoute>
+            <LoginPage />
+          </PublicOnlyRoute>
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          <PublicOnlyRoute>
+            <RegisterPage />
+          </PublicOnlyRoute>
+        }
+      />
+
+      <Route
+        path="/"
+        element={
+          <Protected>
+            <DashboardPage />
+          </Protected>
+        }
+      />
+      <Route
+        path="/products"
+        element={
+          <Protected>
+            <ProductsPage />
+          </Protected>
+        }
+      />
+      <Route
+        path="/products/:id"
+        element={
+          <Protected>
+            <ProductDetailPage />
+          </Protected>
+        }
+      />
+      <Route
+        path="/purchases"
+        element={
+          <Protected>
+            <PurchaseOrdersPage />
+          </Protected>
+        }
+      />
+      <Route
+        path="/purchases/new"
+        element={
+          <Protected>
+            <PurchaseOrderNewPage />
+          </Protected>
+        }
+      />
+      <Route
+        path="/purchases/:id"
+        element={
+          <Protected>
+            <PurchaseOrderDetailPage />
+          </Protected>
+        }
+      />
+      <Route
+        path="/sales"
+        element={
+          <Protected>
+            <SalesOrdersPage />
+          </Protected>
+        }
+      />
+      <Route
+        path="/sales/new"
+        element={
+          <Protected>
+            <SalesOrderNewPage />
+          </Protected>
+        }
+      />
+      <Route
+        path="/sales/:id"
+        element={
+          <Protected>
+            <SalesOrderDetailPage />
+          </Protected>
+        }
+      />
+
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
@@ -53,11 +161,13 @@ function AppRoutes() {
 export default function App() {
   return (
     <MantineProvider>
-      <Notifications />
+      <Notifications position="top-right" />
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <AuthProvider>
-            <AppRoutes />
+            <ErrorBoundary>
+              <AppRoutes />
+            </ErrorBoundary>
           </AuthProvider>
         </BrowserRouter>
       </QueryClientProvider>
