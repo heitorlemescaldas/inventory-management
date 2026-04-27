@@ -12,10 +12,21 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+const AUTH_ENDPOINTS = ['/auth/login/', '/auth/register/', '/auth/refresh/'];
+
+function isAuthEndpoint(url?: string): boolean {
+  if (!url) return false;
+  return AUTH_ENDPOINTS.some((endpoint) => url.includes(endpoint));
+}
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
+    const requestUrl: string | undefined = error.config?.url;
+    const isAuthCall = isAuthEndpoint(requestUrl);
+    const onLoginPage = window.location.pathname === '/login';
+
+    if (error.response?.status === 401 && !isAuthCall && !onLoginPage) {
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
       window.location.href = '/login';
